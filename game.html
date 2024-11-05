@@ -16,21 +16,23 @@
         let KEY_SPACE = false; //32
         let KEY_UP = false; //38
         let KEY_DOWN = false; //40
+        let canvas,ctx;
+        let backgroundImage = new Image();
 
         let elf = {
             x: 100,
             y: 200,
-            with: 200,
+            width: 200,
             height: 80,
-            src: 'img/elf.png'
+            src: 'elf.png'
         };
 
         let oger = {
             x: 500,
             y: 200,
-            with: 100,
+            width: 100,
             height: 40,
-            src: 'img/oger.png'
+            src: 'oger.png'
         };
 
 
@@ -65,14 +67,33 @@
 
         }
 
-        function draw(){
+        function startGame() {
+            canvas = document.getElementById('canvas');
+            ctx  = canvas.getContext('2d');
+            loadImages();
+            draw();
+            // calculate
+        }
 
-            requestAnimationFrame()
+        function loadImages() {
+            backgroundImage.src = 'backgroundImage.png';
+            elf.img = new Image();
+            elf.img.src = elf.src;
+
+            oger.img = new Image();
+            oger.img.src = oger.src;
+        }
+
+        function draw(){
+            ctx.drawImage(backgroundImage, 0, 0);
+
+
+            requestAnimationFrame(draw)
         }
   </script>
 </head>
-<body>
-    <canvas width="720" height="480"></canvas>
+<body onload="startGame()">
+    <canvas id="canvas" width="720" height="480"></canvas>
 
 
 
