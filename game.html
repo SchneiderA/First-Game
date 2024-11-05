@@ -80,7 +80,9 @@
                 && elf.x < oger.x
                 && elf.y < oger.y
                 ) {
+                    elf.img.src = 'skull.png';
                    console.log('Collision!!!');
+                  ogers = ogers.filter(u => u != oger);
                 }
 
             });
