@@ -73,8 +73,8 @@
         }
 
 
-        function CheckForCollision(){
-            ogers.forEach(function(oger){
+        function CheckForCollision() {
+            ogers.forEach(function(oger, index) {
                 if(elf.x + elf.width > oger.x
                 && elf.y + elf.height > oger.y
                 && elf.x < oger.x
@@ -82,7 +82,7 @@
                 ) {
                     elf.img.src = 'skull.png';
                    console.log('Collision!!!');
-                  ogers = ogers.filter(u => u != oger);
+                   ogers.splice(index, 1); // Entfernt den kollidierten Oger
                 }
 
             });
@@ -91,8 +91,8 @@
 
         function createOgers() {
            let oger = {
-                x: 800,
-                y: 200,
+                x: canvas.width,
+                y: Math.floor(Math.random() * (canvas.height - 100)), //Oger appears Random 
                 width: 100,
                 height: 100,
                 src: 'oger.png',
@@ -104,7 +104,7 @@
         }
 
 
-        function update(){
+        function update() {
             if(KEY_UP){
                 elf.y -= 8;
             }
@@ -113,8 +113,11 @@
                 elf.y += 8;
             }
 
-            ogers.forEach(function(oger){
+            ogers.forEach(function(oger, index) {
                 oger.x -= 5;
+                if (oger.x + oger.width < 0) { // Entfernt Oger, wenn er vom Canvas verschwindet
+        ogers.splice(index, 1);
+    } 
             });
 
 
@@ -130,14 +133,14 @@
         }
 
         function draw(){
-            ctx.drawImage(backgroundImage, 0, 0);
+            ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
             ctx.drawImage(elf.img, elf.x, elf.y, elf.width, elf.height);
 
             ogers.forEach(function(oger){
                 ctx.drawImage(oger.img, oger.x, oger.y, oger.width, oger.height);
             });
 
-            requestAnimationFrame(draw)
+            requestAnimationFrame(draw);
         }
   </script>
 </head>
