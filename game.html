@@ -7,16 +7,16 @@
     <title>ElfRage</title>
 
     <style>
-        canvas{
-            background-color: rgba(0, 0, 0, 0.8) ;
+        canvas {
+            background-color: rgba(0, 0, 0, 0.8);
         }
     </style>
 
     <script>
-        let KEY_SPACE = false; //32
-        let KEY_UP = false; //38
-        let KEY_DOWN = false; //40
-        let canvas,ctx;
+        let KEY_SPACE = false; // 32 - Space key
+        let KEY_UP = false;    // 38 - Up arrow
+        let KEY_DOWN = false;  // 40 - Down arrow
+        let canvas, ctx;
         let backgroundImage = new Image();
 
         let elf = {
@@ -24,130 +24,112 @@
             y: 200,
             width: 100,
             height: 80,
-            src: 'elf.png'
+            src: 'elf.png',
+            img: new Image()
         };
 
         let ogers = [];
 
-
         document.onkeydown = function(e) {
-            console.log(e.keyCode);
-            if (e.keyCode ==32) { //Leertaste gedrückt
+            if (e.keyCode === 32) {
                 KEY_SPACE = true;
-            }
-        
-            if (e.keyCode ==38) { //Nach oben gedrückt
+            } else if (e.keyCode === 38) {
                 KEY_UP = true;
-            }
-
-            if (e.keyCode ==40) { //Nach unten gedrückt
+            } else if (e.keyCode === 40) {
                 KEY_DOWN = true;
             }
-
         }
 
         document.onkeyup = function(e) {
-            if (e.keyCode ==32) { //Leertaste losgelassen
+            if (e.keyCode === 32) {
                 KEY_SPACE = false;
-            }
-            
-            if (e.keyCode ==38) { //Nach oben losgelassen
+            } else if (e.keyCode === 38) {
                 KEY_UP = false;
-            }
-
-            if (e.keyCode ==40) { //Nach unten losgelassen
+            } else if (e.keyCode === 40) {
                 KEY_DOWN = false;
             }
-
         }
 
         function startGame() {
             canvas = document.getElementById('canvas');
-            ctx  = canvas.getContext('2d');
+            ctx = canvas.getContext('2d');
             loadImages();
             setInterval(update, 1000 / 25);
-            setInterval(createOgers, 5000);
-            setInterval(CheckForCollision, 1000 / 25);
-            draw();
-            // calculate
+            setInterval(createOgers, 3000); // Create a new ogre every 3 seconds
+            setInterval(checkForCollision, 1000 / 25); // Check for collisions 25 times per second
+            requestAnimationFrame(draw);
         }
 
-
-        function CheckForCollision() {
-            ogers.forEach(function(oger, index) {
-                if(elf.x + elf.width > oger.x
-                && elf.y + elf.height > oger.y
-                && elf.x < oger.x
-                && elf.y < oger.y
-                ) {
-                    elf.img.src = 'skull.png';
-                   console.log('Collision!!!');
-                   ogers.splice(index, 1); // Entfernt den kollidierten Oger
-                }
-
-            });
+        function loadImages() {
+            backgroundImage.src = 'backgroundImage.png';
+            elf.img.src = elf.src;
         }
-
 
         function createOgers() {
-           let oger = {
+            let oger = {
                 x: canvas.width,
-                y: Math.floor(Math.random() * (canvas.height - 100)), //Oger appears Random 
+                y: Math.floor(Math.random() * (canvas.height - 100)), // Random y position within canvas
                 width: 100,
                 height: 100,
                 src: 'oger.png',
                 img: new Image()
             };
-            oger.img.src = oger.src; // Oger-Bild wird geladen.
+            oger.img.src = oger.src;
             ogers.push(oger);
-       
         }
 
-
         function update() {
-            if(KEY_UP){
+            // Update elf position with boundary checks
+            if (KEY_UP && elf.y > 0) {
                 elf.y -= 8;
             }
-
-            if(KEY_DOWN){
+            if (KEY_DOWN && elf.y < canvas.height - elf.height) {
                 elf.y += 8;
             }
 
+            // Move ogres to the left
             ogers.forEach(function(oger, index) {
-                oger.x -= 5;
-                if (oger.x + oger.width < 0) { // Entfernt Oger, wenn er vom Canvas verschwindet
-        ogers.splice(index, 1);
-    } 
+                oger.x -= 5; // Move ogre leftwards
+                if (oger.x + oger.width < 0) { // Remove ogre if it moves off the canvas
+                    ogers.splice(index, 1);
+                }
             });
-
-
         }
 
-
-        function loadImages() {
-            backgroundImage.src = 'backgroundImage.png';
-            elf.img = new Image();
-            elf.img.src = elf.src;
-
-           
+        function checkForCollision() {
+            ogers.forEach(function(oger, index) {
+                if (
+                    elf.x < oger.x + oger.width &&
+                    elf.x + elf.width > oger.x &&
+                    elf.y < oger.y + oger.height &&
+                    elf.y + elf.height > oger.y
+                ) {
+                    elf.img.src = 'skull.png'; // Change elf image on collision
+                    console.log('Collision detected!');
+                    ogers.splice(index, 1); // Remove the collided ogre
+                }
+            });
         }
 
-        function draw(){
+        function draw() {
+            // Draw the background
             ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
+
+            // Draw the elf character
             ctx.drawImage(elf.img, elf.x, elf.y, elf.width, elf.height);
 
-            ogers.forEach(function(oger){
+            // Draw each ogre
+            ogers.forEach(function(oger) {
                 ctx.drawImage(oger.img, oger.x, oger.y, oger.width, oger.height);
             });
 
-            requestAnimationFrame(draw);
+            requestAnimationFrame(draw); // Call draw repeatedly to animate
         }
-  </script>
+    </script>
 </head>
+
 <body onload="startGame()">
     <canvas id="canvas" width="720" height="480"></canvas>
-
-
-
 </body>
+
 </html>
