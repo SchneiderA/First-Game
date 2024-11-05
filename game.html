@@ -67,17 +67,32 @@
             loadImages();
             setInterval(update, 1000 / 25);
             setInterval(createOgers, 5000);
+            setInterval(CheckForCollision, 1000 / 25);
             draw();
             // calculate
         }
 
 
+        function CheckForCollision(){
+            ogers.forEach(function(oger){
+                if(elf.x + elf.width > oger.x
+                && elf.y + elf.height > oger.y
+                && elf.x < oger.x
+                && elf.y < oger.y
+                ) {
+                   console.log('Collision!!!');
+                }
+
+            });
+        }
+
+
         function createOgers() {
            let oger = {
-                x: 500,
+                x: 800,
                 y: 200,
                 width: 100,
-                height: 40,
+                height: 100,
                 src: 'oger.png',
                 img: new Image()
             };
@@ -95,6 +110,12 @@
             if(KEY_DOWN){
                 elf.y += 8;
             }
+
+            ogers.forEach(function(oger){
+                oger.x -= 5;
+            });
+
+
         }
 
 
